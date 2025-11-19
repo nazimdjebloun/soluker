@@ -65,8 +65,8 @@ const SidebarItem = memo(
         isActive={isActive}
         className={`
           flex items-center gap-2 rounded-md px-3 py-2 text-sm
-          hover:bg-primary hover:text-white
-          data-[active=true]:bg-primary data-[active=true]:text-white
+          hover:bg-emerald-800 hover:text-white
+          data-[active=true]:bg-emerald-800 data-[active=true]:text-white
         `}
       >
         <Link href={link.url} className="flex w-full items-center gap-2">

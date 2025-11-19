@@ -72,12 +72,10 @@ export default function Home() {
 
     return (
       <div className="  p-2 ">
-       <div className="flex w-full justify-between items-center mb-6 p-4 rounded-md  ">
+        <div className="flex w-full justify-between items-center mb-6 p-4 rounded-md  ">
           <div>
             <h1 className="text-3xl font-bold text-foreground">Products</h1>
-            <p className="text-muted-foreground">
-              Manage your product catalog
-            </p>
+            <p className="text-muted-foreground">Manage your product catalog</p>
           </div>
 
           <Button
@@ -86,31 +84,27 @@ export default function Home() {
               setIsFormOpen(true);
             }}
             size="lg"
-            className="gap-2"
+            className="gap-2 bg-emerald-800"
           >
             <Plus className="w-5 h-5" />
             Add Product
           </Button>
         </div>
 
-        
-          {isFormOpen && (
-            <ProductForm
-              product={editingProduct}
-              onSubmit={editingProduct ? handleUpdateProduct : handleAddProduct}
-              onClose={handleCloseForm}
-            />
-          )}
-        <div > 
-                <ProductTable
+        {isFormOpen && (
+          <ProductForm
+            product={editingProduct}
+            onSubmit={editingProduct ? handleUpdateProduct : handleAddProduct}
+            onClose={handleCloseForm}
+          />
+        )}
+        <div>
+          <ProductTable
             products={products}
             onEdit={handleEdit}
             onDelete={handleDeleteProduct}
-          />    
-</div>
-
-   
-      
-    </div>
-  );
+          />
+        </div>
+      </div>
+    );
 }
