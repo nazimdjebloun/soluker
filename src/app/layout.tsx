@@ -10,35 +10,36 @@ import {
   SignedOut,
   UserButton,
 } from "@clerk/nextjs";
+import { Toaster } from "@/components/ui/sonner";
 import Header from "@/components/header";
-    import { QueryProvider } from "./providers";
-    const geistSans = Geist({
-      variable: "--font-geist-sans",
-      subsets: ["latin"],
-    });
+import { QueryProvider } from "./providers";
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
 
-    const geistMono = Geist_Mono({
-      variable: "--font-geist-mono",
-      subsets: ["latin"],
-    });
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
 
-    export const metadata: Metadata = {
-      title: "Soluker",
-      description: "Production des produits paramedicales et cosmetiques",
-    };
+export const metadata: Metadata = {
+  title: "Soluker",
+  description: "Production des produits paramedicales et cosmetiques",
+};
 
-    export default function RootLayout({
-      children,
-    }: Readonly<{
-      children: React.ReactNode;
-    }>) {
-      return (
-        <ClerkProvider>
-          <html lang="en" suppressHydrationWarning>
-            <body
-              className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-            >
-              {/* <header className="flex justify-end items-center p-4 gap-4 h-16 bg-amber-200">
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <ClerkProvider>
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          {/* <header className="flex justify-end items-center p-4 gap-4 h-16 bg-amber-200">
             <SignedOut>
               <SignInButton />
             </SignedOut>
@@ -46,12 +47,13 @@ import Header from "@/components/header";
               <UserButton />
             </SignedIn>
           </header> */}
-              {/* <Header /> */}
-              <ThemeProvider defaultTheme="light" enableSystem={false}>
-                <QueryProvider>{children}</QueryProvider>
-              </ThemeProvider>
-            </body>
-          </html>
-        </ClerkProvider>
-      );
-    }
+          {/* <Header /> */}
+          <ThemeProvider defaultTheme="light" enableSystem={false}>
+            <QueryProvider>{children}</QueryProvider>
+            <Toaster />
+          </ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
+  );
+}

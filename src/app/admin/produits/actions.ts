@@ -3,9 +3,13 @@
 import { Product, ProductFormState } from "@/app/admin/produits/types";
 import apiClient, { apiRequest } from "@/lib/api-client";
 
-const ADD_ERROR_STATE = (message: string): ProductFormState => ({
+const ADD_PRODUCT_ERROR_STATE = (
+  message: string,
+  correctFormValues?: ProductFormState["correctFormValues"]
+): ProductFormState => ({
   status: "error",
   message,
+  correctFormValues,
 });
 
 export async function saveProductAction(
@@ -17,44 +21,68 @@ export async function saveProductAction(
   const priceValue = (formData.get("price") ?? "").toString();
   const stockQuantity = (formData.get("stock") ?? "").toString();
   const price = Number(priceValue);
-  const stock = Number(stockQuantity || 0);
+  const stock = Number(stockQuantity);
+  const images = formData.getAll("images") as File[];
 
+  const correctFormValues = {
+    title,
+    description,
+    price: priceValue,
+    stock: stockQuantity,
+  };
 
   if (!title) {
-    return ADD_ERROR_STATE("Product name is required.");
+    return ADD_PRODUCT_ERROR_STATE(
+      "Product name is required.",
+      correctFormValues
+    );
   }
 
   if (!priceValue || Number.isNaN(price)) {
-    return ADD_ERROR_STATE("Please enter a valid price.");
+    return ADD_PRODUCT_ERROR_STATE(
+      "Please enter a valid price.",
+      correctFormValues
+    );
   }
 
   if (price < 0) {
-    return ADD_ERROR_STATE("Price cannot be negative.");
+    return ADD_PRODUCT_ERROR_STATE(
+      "Price cannot be negative.",
+      correctFormValues
+    );
   }
 
   if (Number.isNaN(stock) || stock < 0) {
-    return ADD_ERROR_STATE("Stock must be a positive number.");
+    return ADD_PRODUCT_ERROR_STATE(
+      "Stock must be a positive number.",
+      correctFormValues
+    );
   }
 
-
-  const product= {
-    title,
-    description,
-    price,
-    stock,
-  };
-
   try {
-const result = await apiRequest<Product>("POST", "/catalog/products", product);
+    // Forward the FormData directly to the backend
+    // Axios will handle the Content-Type header for FormData
+    const result = await apiRequest<{ data: Product }>(
+      "POST",
+      "/catalog/products",
+      formData
+      // {
+      //   headers: {
+      //     "Content-Type": "multipart/form-data",
+      //   },
+      // }
+    );
+    console.log(result);
     return {
       status: "success",
       message: "Product saved successfully.",
-      product: result,
+      product: result.data,
     };
   } catch (err: any) {
     console.error(err);
-    return ADD_ERROR_STATE(
-      err.response?.data?.message || "Failed to save product."
+    return ADD_PRODUCT_ERROR_STATE(
+      err.response?.data?.message || "Failed to save product.",
+      correctFormValues
     );
   }
 }
