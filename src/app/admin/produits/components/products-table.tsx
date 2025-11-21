@@ -2,29 +2,49 @@
 
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Edit2, Trash2, Eye } from "lucide-react";
+import { Edit2, Trash2 } from "lucide-react";
 import { useState } from "react";
-import Image from "next/image";
-
-export interface Product {
-  id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  stock: number;
-  images: string[];
-}
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Product } from "@/app/admin/produits/types";
 
 interface ProductTableProps {
   products: Product[];
-  onEdit: (product: Product) => void;
-  onDelete: (id: string) => void;
+  //onEdit: (product: Product) => void;
+  //onDelete: (id: string) => void;
 }
 
-export  function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
+export function ProductTable({
+  products,
+}: //onEdit,
+//onDelete,
+ProductTableProps) {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+
+  const handleDeleteClick = (product: Product) => {
+    setProductToDelete(product);
+    setDeleteConfirm(product.id);
+  };
+
+  const handleConfirmDelete = () => {
+    if (productToDelete) {
+      //onDelete(productToDelete.id);
+      setDeleteConfirm(null);
+      setProductToDelete(null);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteConfirm(null);
+    setProductToDelete(null);
+  };
 
   if (products.length === 0) {
     return (
@@ -48,29 +68,16 @@ export  function ProductTable({ products, onEdit, onDelete }: ProductTableProps)
               {/* Product Info */}
               <div className="flex gap-4 flex-1">
                 {/* Thumbnail */}
-                <div className="shrink-0">
-                  <div className="relative w-20 h-20 bg-muted rounded-lg overflow-hidden">
-                    <img
-                      src={product.images[0] || "/placeholder.svg"}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
 
                 {/* Details */}
                 <div className="flex-1">
                   <h3 className="font-semibold text-lg text-foreground">
-                    {product.name}
+                    {product.title}
                   </h3>
                   <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
                     {product.description}
                   </p>
                   <div className="flex gap-4 mt-3">
-                    <div>
-                      <p className="text-xs text-muted-foreground">Category</p>
-                      <p className="text-sm font-medium">{product.category}</p>
-                    </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Price</p>
                       <p className="text-sm font-medium">${product.price}</p>
@@ -79,12 +86,6 @@ export  function ProductTable({ products, onEdit, onDelete }: ProductTableProps)
                       <p className="text-xs text-muted-foreground">Stock</p>
                       <p className="text-sm font-medium">
                         {product.stock} units
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground">Images</p>
-                      <p className="text-sm font-medium">
-                        {product.images.length}
                       </p>
                     </div>
                   </div>
@@ -96,48 +97,47 @@ export  function ProductTable({ products, onEdit, onDelete }: ProductTableProps)
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => onEdit(product)}
+                  //onClick={() => onEdit(product)}
                   className="gap-2"
                 >
                   <Edit2 className="w-4 h-4" />
                   <span className="hidden sm:inline">Edit</span>
                 </Button>
-                {deleteConfirm === product.id ? (
-                  <div className="flex gap-1">
-                    <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => {
-                        onDelete(product.id);
-                        setDeleteConfirm(null);
-                      }}
-                    >
-                      Confirm
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setDeleteConfirm(null)}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setDeleteConfirm(product.id)}
-                    className="gap-2 text-destructive"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    <span className="hidden sm:inline">Delete</span>
-                  </Button>
-                )}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleDeleteClick(product)}
+                  className="gap-2 text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  <span className="hidden sm:inline">Delete</span>
+                </Button>
               </div>
             </div>
           </Card>
         ))}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={deleteConfirm !== null} onOpenChange={handleCancelDelete}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Product</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{productToDelete?.title}"? This
+              action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCancelDelete}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleConfirmDelete}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
