@@ -174,9 +174,10 @@ export function AddProductForm({ onClose, onSuccess }: AddProductFormProps) {
                 ))}
                 <Input
                   type="file"
+                  name="images"
                   accept="image/*"
                   multiple
-                  onChange={handleImageChange}
+                  //onChange={handleImageChange}
                   className=""
                 />
               </div>

@@ -31,60 +31,60 @@ export async function saveProductAction(
     stock: stockQuantity,
   };
 
-  if (!title) {
-    return ADD_PRODUCT_ERROR_STATE(
-      "Product name is required.",
-      correctFormValues
-    );
-  }
-
-  if (!priceValue || Number.isNaN(price)) {
-    return ADD_PRODUCT_ERROR_STATE(
-      "Please enter a valid price.",
-      correctFormValues
-    );
-  }
-
-  if (price < 0) {
-    return ADD_PRODUCT_ERROR_STATE(
-      "Price cannot be negative.",
-      correctFormValues
-    );
-  }
-
-  if (Number.isNaN(stock) || stock < 0) {
-    return ADD_PRODUCT_ERROR_STATE(
-      "Stock must be a positive number.",
-      correctFormValues
-    );
-  }
-
-  try {
-    // Forward the FormData directly to the backend
-    // Axios will handle the Content-Type header for FormData
-    const result = await apiRequest<{ data: Product }>(
-      "POST",
-      "/catalog/products",
-      formData
-      // {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // }
-    );
-    console.log(result);
-    return {
-      status: "success",
-      message: "Product saved successfully.",
-      product: result.data,
+    const product = {
+      title,
+      description,
+      price: priceValue,
+      stock: stockQuantity,
+      images,
     };
-  } catch (err: any) {
-    console.error(err);
-    return ADD_PRODUCT_ERROR_STATE(
-      err.response?.data?.message || "Failed to save product.",
-      correctFormValues
-    );
-  }
+
+    if (!title) {
+      return ADD_PRODUCT_ERROR_STATE(
+        "Product name is required.",
+        correctFormValues
+      );
+    }
+
+    if (!priceValue || Number.isNaN(price)) {
+      return ADD_PRODUCT_ERROR_STATE(
+        "Please enter a valid price.",
+        correctFormValues
+      );
+    }
+
+    if (price < 0) {
+      return ADD_PRODUCT_ERROR_STATE(
+        "Price cannot be negative.",
+        correctFormValues
+      );
+    }
+
+    if (Number.isNaN(stock) || stock < 0) {
+      return ADD_PRODUCT_ERROR_STATE(
+        "Stock must be a positive number.",
+        correctFormValues
+      );
+    }
+
+    try {
+      const result = await apiRequest<{ data: Product }>(
+        "POST",
+        "/catalog/products",
+        product
+      );
+      return {
+        status: "success",
+        message: "Product saved successfully.",
+        product: result.data,
+      };
+    } catch (err: any) {
+      console.error(err);
+      return ADD_PRODUCT_ERROR_STATE(
+        err.response?.data?.message || "Failed to save product.",
+        correctFormValues
+      );
+    }
 }
 
 
